@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:31:06 by bperriol          #+#    #+#             */
-/*   Updated: 2022/12/20 16:05:15 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2022/12/21 18:18:48 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,18 @@ static int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-t_arg	initialize(int argc, char **argv)
+int	initialize(t_arg *arg, int argc, char **argv)
 {
-	t_arg	arg;
-
-	arg.nb_philo = 0;
-	arg.nb_total_philo = ft_atoi(argv[1]);
-	arg.time_die = ft_atoi(argv[2]);
-	arg.time_eat = ft_atoi(argv[3]);
-	arg.time_sleep = ft_atoi(argv[4]);
+	if (argc != 5 && argc != 6)
+		return (msg_error(1));
+	arg->nb_philo = 0;
+	arg->nb_total_philo = ft_atoi(argv[1]);
+	arg->time_die = ft_atoi(argv[2]);
+	arg->time_eat = ft_atoi(argv[3]);
+	arg->time_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
-		arg.nb_times_eat = ft_atoi(argv[5]);
+		arg->nb_times_eat = ft_atoi(argv[5]);
 	else
-		arg.nb_times_eat = 0;
-	return (arg);
+		arg->nb_times_eat = 0;
+	return (1);
 }

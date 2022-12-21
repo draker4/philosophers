@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:22:36 by bperriol          #+#    #+#             */
-/*   Updated: 2022/12/20 16:04:59 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2022/12/21 18:18:18 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ typedef struct s_arg
 }	t_arg;
 
 //prototypes utils
-t_arg	initialize(int argc, char **argv);
+int	initialize(t_arg *arg, int argc, char **argv);
 
 //prototypes message error
-int		msg_error(int msg);
+int	msg_error(int msg);
 
 #endif

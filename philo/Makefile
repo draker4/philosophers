@@ -8,7 +8,7 @@ NAME		=	philo
 
 # ---- Directories ---- #
 
-DIR_OBJS	=	.objs/
+DIR_OBJS	=	.build/
 
 # ---- Files ---- #
 
