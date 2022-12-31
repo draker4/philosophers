@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:31:06 by bperriol          #+#    #+#             */
-/*   Updated: 2022/12/21 18:18:48 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2022/12/31 17:58:59 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	ft_overflow(int sign)
 		return ((int)LONG_MAX);
 }
 
-static int	ft_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
 	int			i;
 	long long	result;
@@ -48,18 +48,22 @@ static int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-int	initialize(t_arg *arg, int argc, char **argv)
+void	write_msg(int msg, t_data **data, int time)
 {
-	if (argc != 5 && argc != 6)
-		return (msg_error(1));
-	arg->nb_philo = 0;
-	arg->nb_total_philo = ft_atoi(argv[1]);
-	arg->time_die = ft_atoi(argv[2]);
-	arg->time_eat = ft_atoi(argv[3]);
-	arg->time_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		arg->nb_times_eat = ft_atoi(argv[5]);
-	else
-		arg->nb_times_eat = 0;
-	return (1);
+	if (msg == 0)
+		printf("%d ms: %d has taken a fork\n", time, (*data)->index);
+	else if (msg == 1)
+	{
+		(*data)->t_begin_eat = time;
+		printf("%d ms: %d is eating\n", time, (*data)->index);
+	}
+	else if (msg == 2)
+		printf("%d ms: %d is sleeping\n", time, (*data)->index);
+	else if (msg == 3)
+		printf("%d ms: %d is thinking\n", time, (*data)->index);
+	else if (msg == 4)
+	{
+		(*data)->info->stop = 1;
+		printf("%d ms: %d died\n", time, (*data)->index);
+	}
 }

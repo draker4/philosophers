@@ -6,73 +6,76 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:23:19 by bperriol          #+#    #+#             */
-/*   Updated: 2022/12/21 18:59:17 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2022/12/31 18:49:19 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	*start_routine(void *data)
+static void	*routine(void *p_data)
 {
-	int	index;
-	int	*result;
+	t_data			*data;
 
-	index = *(int *)data;
-	free(data);
-	result = malloc(sizeof(int *));
-	*result = index;
-	printf("i = %d\n", index);
-	return ((void *)result);
+	data = (t_data *)p_data;
+	while (data->info->stop == -1)
+		;
+	while (!data->info->stop)
+	{
+		philo_wait_forks(&data, data->index, data->prev_circ->index);
+		if (data->arg->nb_total_philo > 1 && !data->info->stop)
+			philo_wait_forks(&data, data->next_circ->index, \
+			data->next_circ->index);
+		if (!data->info->stop)
+			philo_eat(&data);
+	}
+	return (data);
 }
 
-static int	join_threads(t_arg *arg, pthread_t *thread_philos)
+static int	join_threads(t_data *data, pthread_t *philos)
 {
-	int	i;
-	int	*res;
+	int		i;
+	t_data	*res;
 
 	i = 0;
-	while (i < arg->nb_philo)
+	while (i < data->arg->nb_total_philo)
 	{
-		if (pthread_join(thread_philos[i++], (void **)&res))
-		{
-			free(res);
-			return (msg_error(4));
-		}
-		printf("fin index = %d\n", *res);
-		free(res);
+		if (pthread_join(philos[i], (void **)&res))
+			write(2, "Pthread_join function error!\n", 29);
+		i++;
 	}
 	return (1);
 }
 
-static int	create_threads(t_arg *arg, pthread_t *philos)
+static int	create_threads(t_data *data, pthread_t *philos)
 {
-	int	i;
-	int	*index;
+	int		i;
+	t_data	*current;
 
 	i = 0;
-	while (i < arg->nb_total_philo)
+	current = data;
+	while (i < data->arg->nb_total_philo)
 	{
-		index = malloc(sizeof(int *));
-		*index = i;
-		if (pthread_create(&philos[i], NULL, &start_routine, index))
-			return (msg_error(3));
-		arg->nb_philo = i++;
+		if (pthread_create(&philos[i], NULL, &routine, (void *)current))
+			write(2, "Pthread_create function error!\n", 31);
+		current = current->next;
+		i++;
 	}
 	return (1);
 }
 
 int	main(int argc, char **argv)
 {
-	t_arg		arg;
-	pthread_t	*philos;
+	t_data			*data;
+	pthread_t		*philos;
 
-	if (!initialize(&arg, argc, argv))
+	data = NULL;
+	if (!initialize(&data, argc, argv) || !init_mutex(&data))
 		return (0);
-	philos = malloc(sizeof(pthread_t) * arg.nb_philo);
+	philos = malloc(sizeof(pthread_t) * data->arg->nb_total_philo);
 	if (!philos)
-		return (msg_error(2));
-	if (!create_threads(&arg, philos) || !join_threads(&arg, philos))
-		return (0);
-	free(philos);
-	return (0);
+		return (msg_error(2, NULL, &data));
+	create_threads(data, philos);
+	data->info->stop = 0;
+	join_threads(data, philos);
+	return (msg_error(0, philos, &data));
 }

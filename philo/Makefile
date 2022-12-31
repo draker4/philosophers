@@ -12,15 +12,18 @@ DIR_OBJS	=	.build/
 
 # ---- Files ---- #
 
-SRCS		=	philo.c		utils.c	\
-				msg_error.c
+SRCS		=	philo.c			utils.c			\
+				msg_error.c		linked_list.c	\
+				init.c			philo_eat.c		\
+				get_time.c		ft_putstr.c		\
+				init_list.c
 
 OBJS		=	${SRCS:%.c=${DIR_OBJS}%.o}
 
 # ---- Compilation ---- #
 
-CC		=	cc
-CFLAGS	=	-Wall -Wextra -Werror -pthread
+CC				=	cc
+CFLAGS			=	-Wall -Wextra -Werror
 
 # ---- Commands ---- #
 
@@ -34,12 +37,12 @@ all				:	${NAME}
 # ---- Variables Rules ---- #
 
 ${NAME}			:	${OBJS} Makefile
-					${CC} ${CFLAGS} -o ${NAME} ${OBJS}
+					${CC} ${CFLAGS} -pthread -o ${NAME} ${OBJS}
 
 # ---- Compiled Rules ---- #
 
 ${DIR_OBJS}%.o	:	${DIR_SRCS}%.c Makefile | ${DIR_OBJS}
-					${CC} ${CFLAGS} -MMD -I. -c $< -o $@
+					${CC} ${CFLAGS} -pthread -MMD -I. -c $< -o $@
 
 ${DIR_OBJS}		:
 					${MKDIR} ${DIR_OBJS}
