@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:23:19 by bperriol          #+#    #+#             */
-/*   Updated: 2022/12/31 18:49:19 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 15:28:36 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,48 +14,51 @@
 
 static void	*routine(void *p_data)
 {
-	t_data			*data;
+	t_data	*data;
 
 	data = (t_data *)p_data;
-	while (data->info->stop == -1)
+	while (get_stop(&data) == -1)
 		;
-	while (!data->info->stop)
+	if (data->index % 2)
+		usleep(500);
+	while (!get_stop(&data))
 	{
-		philo_wait_forks(&data, data->index, data->prev_circ->index);
-		if (data->arg->nb_total_philo > 1 && !data->info->stop)
-			philo_wait_forks(&data, data->next_circ->index, \
-			data->next_circ->index);
-		if (!data->info->stop)
+		philo_wait_forks(&data);
+		if (!get_stop(&data))
 			philo_eat(&data);
+		if (!get_stop(&data))
+			philo_sleep(&data);
 	}
+	// printf("fin philo %d\n", data->index);
 	return (data);
 }
 
-static int	join_threads(t_data *data, pthread_t *philos)
+static int	join_threads(t_data **data)
 {
 	int		i;
 	t_data	*res;
 
 	i = 0;
-	while (i < data->arg->nb_total_philo)
+	while (i < (*data)->arg->nb_total_philo)
 	{
-		if (pthread_join(philos[i], (void **)&res))
+		if (pthread_join((*data)->info->philos[i], (void **)&res))
 			write(2, "Pthread_join function error!\n", 29);
 		i++;
 	}
 	return (1);
 }
 
-static int	create_threads(t_data *data, pthread_t *philos)
+static int	create_threads(t_data **data)
 {
 	int		i;
 	t_data	*current;
 
 	i = 0;
-	current = data;
-	while (i < data->arg->nb_total_philo)
+	current = *data;
+	while (i < (*data)->arg->nb_total_philo)
 	{
-		if (pthread_create(&philos[i], NULL, &routine, (void *)current))
+		if (pthread_create(&(*data)->info->philos[i], \
+		NULL, &routine, (void *)current))
 			write(2, "Pthread_create function error!\n", 31);
 		current = current->next;
 		i++;
@@ -67,15 +70,22 @@ int	main(int argc, char **argv)
 {
 	t_data			*data;
 	pthread_t		*philos;
+	struct timeval	tp;
 
 	data = NULL;
 	if (!initialize(&data, argc, argv) || !init_mutex(&data))
 		return (0);
 	philos = malloc(sizeof(pthread_t) * data->arg->nb_total_philo);
 	if (!philos)
-		return (msg_error(2, NULL, &data));
-	create_threads(data, philos);
-	data->info->stop = 0;
-	join_threads(data, philos);
-	return (msg_error(0, philos, &data));
+		return (msg_error(2, &data));
+	data->info->philos = philos;
+	create_threads(&data);
+	if (gettimeofday(&tp, NULL))
+		write(2, "GetTimeOfDay function error\n", 28);
+	data->info->init_time.s = tp.tv_sec;
+	data->info->init_time.mu_s = tp.tv_usec;
+	set_stop(&data, 0);
+	check_death(&data);
+	join_threads(&data);
+	return (msg_error(0, &data));
 }

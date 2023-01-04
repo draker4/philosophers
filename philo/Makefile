@@ -14,16 +14,17 @@ DIR_OBJS	=	.build/
 
 SRCS		=	philo.c			utils.c			\
 				msg_error.c		linked_list.c	\
-				init.c			philo_eat.c		\
+				init.c			philo_action.c	\
 				get_time.c		ft_putstr.c		\
-				init_list.c
+				init_list.c		mutex.c			\
+				death.c
 
 OBJS		=	${SRCS:%.c=${DIR_OBJS}%.o}
 
 # ---- Compilation ---- #
 
 CC				=	cc
-CFLAGS			=	-Wall -Wextra -Werror
+CFLAGS			=	-Wall -Wextra -Werror #-fsanitize=thread
 
 # ---- Commands ---- #
 

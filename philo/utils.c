@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:31:06 by bperriol          #+#    #+#             */
-/*   Updated: 2022/12/31 17:58:59 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 15:34:49 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,14 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-void	write_msg(int msg, t_data **data, int time)
+void	write_msg(char *str, t_data **data, int time)
 {
-	if (msg == 0)
-		printf("%d ms: %d has taken a fork\n", time, (*data)->index);
-	else if (msg == 1)
-	{
-		(*data)->t_begin_eat = time;
-		printf("%d ms: %d is eating\n", time, (*data)->index);
-	}
-	else if (msg == 2)
-		printf("%d ms: %d is sleeping\n", time, (*data)->index);
-	else if (msg == 3)
-		printf("%d ms: %d is thinking\n", time, (*data)->index);
-	else if (msg == 4)
-	{
-		(*data)->info->stop = 1;
-		printf("%d ms: %d died\n", time, (*data)->index);
-	}
+	if (pthread_mutex_lock(&(*data)->info->mutex_write))
+		write(2, "Pthread_Mutex_Lock function error\n", 34);
+	ft_putnbr_fd(time, 1);
+	write(1, " ms ", 4);
+	ft_putnbr_fd((*data)->index + 1, 1);
+	write(1, str, ft_strlen(str));
+	if (pthread_mutex_unlock(&(*data)->info->mutex_write))
+		write(2, "Pthread_Mutex_Unlock function error\n", 36);
 }
