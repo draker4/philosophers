@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:31:06 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 15:34:49 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 16:01:45 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,30 @@ void	write_msg(char *str, t_data **data, int time)
 	if (pthread_mutex_lock(&(*data)->info->mutex_write))
 		write(2, "Pthread_Mutex_Lock function error\n", 34);
 	ft_putnbr_fd(time, 1);
-	write(1, " ms ", 4);
+	write(1, " ", 1);
 	ft_putnbr_fd((*data)->index + 1, 1);
 	write(1, str, ft_strlen(str));
 	if (pthread_mutex_unlock(&(*data)->info->mutex_write))
 		write(2, "Pthread_Mutex_Unlock function error\n", 36);
+}
+
+void	set_begin(t_data **data)
+{
+	if (pthread_mutex_lock(&(*data)->info->mutex_write))
+		write(2, "Pthread_Mutex_Lock function error\n", 34);
+	(*data)->info->begin += 1;
+	if (pthread_mutex_unlock(&(*data)->info->mutex_write))
+		write(2, "Pthread_Mutex_Unlock function error\n", 36);
+}
+
+int	get_begin(t_data **data)
+{
+	int	begin;
+
+	if (pthread_mutex_lock(&(*data)->info->mutex_write))
+		write(2, "Pthread_Mutex_Lock function error\n", 34);
+	begin = (*data)->info->begin;
+	if (pthread_mutex_unlock(&(*data)->info->mutex_write))
+		write(2, "Pthread_Mutex_Unlock function error\n", 36);
+	return (begin);
 }

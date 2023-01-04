@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/25 14:52:46 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 15:29:32 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 16:23:43 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,6 @@ static void	fill_arg(t_arg *arg, int argc, char **argv)
 	else
 		arg->nb_min_eat = 0;
 }
-
-// static void	fill_info(t_info *info, pthread_mutex_t	*forks, \
-// pthread_mutex_t	*neighbourgs, pthread_mutex_t *mutex_stop)
-// {
-// 	info->stop = -1;
-// 	info->init_time.s = 0;
-// 	info->init_time.mu_s = 0;
-// 	info->forks = forks;
-// 	info->neighbourgs = neighbourgs;
-// 	info->mutex_stop = mutex_stop;
-// }
 
 static int	free_all(t_arg *arg, t_info *info, pthread_mutex_t *forks)
 {
@@ -53,6 +42,7 @@ static int	init_arg_info(t_arg *arg, t_info *info, int argc, char **argv)
 	if (!forks)
 		return (free_all(arg, info, NULL));
 	info->stop = -1;
+	info->begin = 0;
 	info->init_time.s = 0;
 	info->init_time.mu_s = 0;
 	info->forks = forks;

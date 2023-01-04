@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:22:36 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 15:34:55 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 16:24:29 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_arg
 //structure that all can access directly in the linked list
 typedef struct s_info
 {
+	int				begin;
 	int				stop;
 	t_vector		init_time;
 	pthread_t		*philos;
@@ -67,7 +68,8 @@ typedef struct s_data
 //prototypes utils
 int		ft_atoi(const char *str);
 void	write_msg(char *str, t_data **data, int time);
-int		ft_strlen(char *s);
+void	set_begin(t_data **data);
+int		get_begin(t_data **data);
 
 //prototypes init
 int		initialize(t_data **data, int argc, char **argv);
@@ -102,13 +104,9 @@ void	check_death(t_data **data);
 int		get_stop(t_data **data);
 void	set_stop(t_data **data, int nb);
 
-
-
 //prototypes putstr
-void				ft_putchar_fd(char c, int fd);
+void	ft_putchar_fd(char c, int fd);
 void	ft_putnbr_fd(int n, int fd);
 int		ft_strlen(char *s);
-
-
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 16:50:52 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 14:30:17 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 16:23:32 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,5 @@ int	get_time(t_data **data)
 		time += tp.tv_usec;
 		time /= 1000;
 	}
-	// if (time < 0)
-	//  	printf("index = %d et timeday = %ld et %d et time = %d\n", (*data)->index + 1, tp.tv_sec, tp.tv_usec, time);
-	//  if (time < 0)
-	//  	printf("time init = %d et %d\n", (*data)->info->init_time.s, (*data)->info->init_time.mu_s);
 	return (time);
 }

@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 18:19:45 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 15:35:28 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 16:43:18 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ static void	is_philo_dead(t_data **data, int time)
 		error = 1;
 	if (error)
 	{
-		// printf("die because of time %d\n", time);
 		if (pthread_mutex_lock(&(*data)->info->mutex_stop))
 			write(2, "Pthread_Mutex_Lock function error\n", 34);
 		if (!(*data)->info->stop)
@@ -43,16 +42,11 @@ static void	has_enough_eat(t_data **data)
 {
 	int	i;
 
-	// printf("die because of eat\n");
-	if (pthread_mutex_lock(&(*data)->info->mutex_stop))
-		write(2, "Pthread_Mutex_Lock function error\n", 34);
-	(*data)->info->stop = 1;
-	if (pthread_mutex_unlock(&(*data)->info->mutex_stop))
-		write(2, "Pthread_Mutex_Unlock function error\n", 36);
+	set_stop(data, 1);
 	i = 0;
 	while (i < (*data)->arg->nb_total_philo)
 	{
-		if (pthread_mutex_unlock(&(*data)->info->forks[i]))
+		if (pthread_mutex_unlock(&(*data)->info->forks[i++]))
 			write(2, "Pthread_Mutex_Unlock function error\n", 36);
 	}
 }
@@ -72,7 +66,7 @@ void	check_death(t_data **data)
 			time = get_time(data);
 			is_philo_dead(&current, time);
 			if ((*data)->arg->nb_min_eat > 0 && \
-			get_eat(&current, 1) <= (*data)->arg->nb_min_eat)
+			get_eat(&current, 1) < (*data)->arg->nb_min_eat)
 				nb_meals = 0;
 			current = current->next;
 		}

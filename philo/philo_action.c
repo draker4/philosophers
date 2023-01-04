@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/25 16:38:27 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 15:36:13 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 16:19:12 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	philo_sleep(t_data **data)
 		write_msg(" is sleeping\n", data, time);
 	while (!get_stop(data) && get_time(data) - (*data)->t_begin_sleep < \
 	(*data)->arg->time_sleep)
-		;
+		usleep(500);
 	time = get_time(data);
 	if (!get_stop(data))
 		write_msg(" is thinking\n", data, time);
@@ -38,14 +38,11 @@ void	philo_eat(t_data **data)
 		write_msg(" is eating\n", data, time);
 	while (!get_stop(data) && get_time(data) - get_eat(data, 0) < \
 	(*data)->arg->time_eat)
-		;
-	// set_eat(data, 0, 1);
+		usleep(500);
+	set_eat(data, 0, 1);
 	if (pthread_mutex_unlock(&(*data)->info->forks[(*data)->index]) \
 	|| pthread_mutex_unlock(&(*data)->info->forks[(*data)->next_circ->index]))
 		write(2, "Pthread_Mutex_Unlock function error\n", 36);
-	time = get_time(data);
-	if (!get_stop(data))
-		write_msg(" FINISH EATING\n", data, time);
 }
 
 void	philo_wait_forks(t_data **data)
