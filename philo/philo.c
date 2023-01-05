@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:23:19 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 16:43:39 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 17:39:09 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,12 @@ int	main(int argc, char **argv)
 		return (msg_error(2, &data));
 	data->info->philos = philos;
 	create_threads(&data);
+	while (get_begin(&data) != data->arg->nb_total_philo)
+		;
 	if (gettimeofday(&tp, NULL))
 		write(2, "GetTimeOfDay function error\n", 28);
 	data->info->init_time.s = tp.tv_sec;
 	data->info->init_time.mu_s = tp.tv_usec;
-	while (get_begin(&data) != data->arg->nb_total_philo)
-		;
 	set_stop(&data, 0);
 	check_death(&data);
 	join_threads(&data);

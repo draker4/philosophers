@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 11:22:36 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 16:24:29 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 17:21:48 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/time.h>
+# include <sys/types.h>
 # include <stdio.h>
 
 // vector saving tim in seconds and microseconds
