@@ -6,50 +6,95 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 12:27:28 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/05 14:36:27 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/06 17:12:01 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static int	initialize(t_arg *arg, int argc, char **argv)
+static void	check_meals(t_data *data)
 {
-	if (argc != 5 && argc != 6)
-		return (msg_error(1, NULL, NULL));
-	if (ft_atoi(argv[1]) < 1)
-		return (msg_error(3, NULL, NULL));
-	if (argc == 6 && ft_atoi(argv[5]) < 1)
-		return (msg_error(0, NULL, NULL));
-	arg->nb_total_philo = ft_atoi(argv[1]);
-	arg->time_die = ft_atoi(argv[2]);
-	arg->time_eat = ft_atoi(argv[3]);
-	arg->time_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		arg->nb_min_eat = ft_atoi(argv[5]);
+	int	i;
+
+	i = 0;
+	while (i < data->arg->nb_total_philo)
+	{
+		if (sem_wait(data->sem_meals))
+			write(2, "Sem_wait function error!\n", 25);
+		i++;
+	}
+	printf("la\n");
+	if (sem_post(data->sem_stop))
+		write(2, "Sem_post function error!\n", 25);
+	while (1)
+		;
+}
+
+static void	child_routine(t_data *data)
+{
+	int	time;
+
+	if (data->index == data->arg->nb_total_philo + 1)
+		check_meals(data);
+	time = get_time(data);
+	if (data->arg->nb_total_philo == 1)
+	{
+		philo_one_fork(data);
+		while (is_not_dead(data, time))
+			time = get_time(data);
+	}
 	else
-		arg->nb_min_eat = 0;
+	{
+		while (is_not_dead(data, time))
+		{
+			philo_wait_forks(data);
+			philo_eat(data);
+			philo_sleep(data);
+			time = get_time(data);
+		}
+	}
+	write_msg(" died\n", data, time, 1);
+	if (sem_post(data->sem_stop))
+		write(2, "Sem_post function error!\n", 25);
+}
+
+static int	create_philos(t_data *data, int *pid)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->arg->nb_total_philo + 1)
+	{
+		data->index = i + 1;
+		data->pid_tab[i] = fork();
+		*pid = data->pid_tab[i];
+		if (data->pid_tab[i] == -1)
+		{
+			while (--i)
+			{
+				if (kill(data->pid_tab[i], SIGKILL) == -1)
+					write(2, "kill function error!\n", 21);
+			}
+			return (msg_error(4, data));
+		}
+		else if (!data->pid_tab[i])
+			break ;
+		i++;
+	}
 	return (1);
 }
 
-static int	create_philos(t_arg *arg)
+static int	parent_routine(t_data *data)
 {
-	int		i;
-	pid_t	*pid;
-	pid_t	id;
+	int	i;
 
 	i = 0;
-	pid = malloc(sizeof(pid_t) * arg->nb_total_philo);
-	if (!pid)
-		return (msg_error(2, arg, NULL));
-	// pid[i] = fork();
-	// if (pid[i] == -1)
-	// 	return (msg_error(4, arg, pid));
-	while (i < arg->nb_total_philo)
+	if (sem_wait(data->sem_stop))
+		write(2, "Sem_wait function error!\n", 25);
+	while (i < data->arg->nb_total_philo + 1)
 	{
-		if (pid[i] > 0)
-			id = fork();
-		if (id == -1)
-			return (msg_error(4, arg, pid));
+		if (kill(data->pid_tab[i], SIGKILL) == -1)
+			write(2, "kill function error!\n", 21);
 		i++;
 	}
 	return (1);
@@ -57,14 +102,23 @@ static int	create_philos(t_arg *arg)
 
 int	main(int argc, char **argv)
 {
-	t_arg	*arg;
+	t_data	*data;
+	pid_t	pid;
 
-	arg = malloc(sizeof(t_arg));
-	if (!arg)
-		return (msg_error(2, NULL, NULL));
-	if (!initialize(arg, argc, argv))
+	data = malloc(sizeof(t_data));
+	if (!data)
+		return (msg_error(2, NULL));
+	if (!initialize(data, argc, argv))
 		return (0);
-	if (!create_philos(arg))
+	init_time(data);
+	if (!create_philos(data, &pid))
 		return (0);
-	printf("hello_world !\n");
+	if (!pid)
+		child_routine(data);
+	else
+	{
+		if (!parent_routine(data))
+			return (msg_error(0, data));
+	}
+	return (msg_error(0, data));
 }

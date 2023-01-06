@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/25 16:38:27 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 16:19:12 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/06 17:00:00 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,13 @@ void	philo_sleep(t_data **data)
 	(*data)->t_begin_sleep = time;
 	if (!get_stop(data))
 		write_msg(" is sleeping\n", data, time);
-	while (!get_stop(data) && get_time(data) - (*data)->t_begin_sleep < \
+	while (!get_stop(data) && time - (*data)->t_begin_sleep < \
 	(*data)->arg->time_sleep)
+	{
 		usleep(500);
-	time = get_time(data);
+		time = get_time(data);
+	}
+	// time = get_time(data);
 	if (!get_stop(data))
 		write_msg(" is thinking\n", data, time);
 }
@@ -36,9 +39,13 @@ void	philo_eat(t_data **data)
 	set_eat(data, time, 0);
 	if (!get_stop(data))
 		write_msg(" is eating\n", data, time);
-	while (!get_stop(data) && get_time(data) - get_eat(data, 0) < \
+	while (!get_stop(data) && time - get_eat(data, 0) < \
 	(*data)->arg->time_eat)
+	{
 		usleep(500);
+		time = get_time(data);
+	}
+	// printf("time fin eat = %d pour %d\n", time, (*data)->index + 1);
 	set_eat(data, 0, 1);
 	if (pthread_mutex_unlock(&(*data)->info->forks[(*data)->index]) \
 	|| pthread_mutex_unlock(&(*data)->info->forks[(*data)->next_circ->index]))

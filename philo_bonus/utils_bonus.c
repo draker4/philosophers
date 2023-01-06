@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 12:33:20 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/05 13:27:08 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/06 16:12:50 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,17 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-// void	write_msg(char *str, t_data **data, int time)
-// {
-// 	if (pthread_mutex_lock(&(*data)->info->mutex_write))
-// 		write(2, "Pthread_Mutex_Lock function error\n", 34);
-// 	ft_putnbr_fd(time, 1);
-// 	write(1, " ", 1);
-// 	ft_putnbr_fd((*data)->index + 1, 1);
-// 	write(1, str, ft_strlen(str));
-// 	if (pthread_mutex_unlock(&(*data)->info->mutex_write))
-// 		write(2, "Pthread_Mutex_Unlock function error\n", 36);
-// }
+void	write_msg(char *str, t_data *data, int time, int death)
+{
+	if (sem_wait(data->sem_write))
+		write(2, "Sem_wait function error!\n", 25);
+	ft_putnbr_fd(time, 1);
+	write(1, " ", 1);
+	ft_putnbr_fd(data->index, 1);
+	write(1, str, ft_strlen(str));
+	if (!death)
+	{
+		if (sem_post(data->sem_write))
+			write(2, "Sem_post function error!\n", 25);
+	}
+}

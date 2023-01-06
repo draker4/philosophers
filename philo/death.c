@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 18:19:45 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/04 16:43:18 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/06 16:39:22 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	is_philo_dead(t_data **data, int time)
 		if (pthread_mutex_lock(&(*data)->info->mutex_stop))
 			write(2, "Pthread_Mutex_Lock function error\n", 34);
 		if (!(*data)->info->stop)
-			write_msg(" is dead\n", data, time);
+			write_msg(" died\n", data, time);
 		(*data)->info->stop = 1;
 		if (pthread_mutex_unlock(&(*data)->info->mutex_stop))
 			write(2, "Pthread_Mutex_Unlock function error\n", 36);
