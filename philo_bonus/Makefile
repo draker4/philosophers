@@ -1,4 +1,4 @@
-.PHONY:	all clean fclean re fclean_all
+.PHONY:	all clean fclean re
 
 # ******** VARIABLES ******** #
 
