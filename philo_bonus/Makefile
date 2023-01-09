@@ -1,4 +1,4 @@
-.PHONY:	all clean fclean re
+.PHONY:	all clean fclean re bonus
 
 # ******** VARIABLES ******** #
 
@@ -31,12 +31,14 @@ MKDIR	=	mkdir -p
 
 # ********* RULES ******** #
 
-all				:	${NAME}
+all		:	${NAME}
+
+bonus	:	${NAME}
 
 # ---- Variables Rules ---- #
 
-${NAME}			:	${OBJS} Makefile
-					${CC} ${CFLAGS} -o ${NAME} ${OBJS}
+${NAME}	:	${OBJS} Makefile
+			${CC} ${CFLAGS} -o ${NAME} ${OBJS}
 
 # ---- Compiled Rules ---- #
 
