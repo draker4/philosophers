@@ -6,7 +6,7 @@
 /*   By: bperriol <bperriol@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 12:27:28 by bperriol          #+#    #+#             */
-/*   Updated: 2023/01/06 17:12:01 by bperriol         ###   ########lyon.fr   */
+/*   Updated: 2023/01/09 10:46:24 by bperriol         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ static void	check_meals(t_data *data)
 			write(2, "Sem_wait function error!\n", 25);
 		i++;
 	}
-	printf("la\n");
+	if (sem_wait(data->sem_write))
+		write(2, "Sem_wait function error!\n", 25);
 	if (sem_post(data->sem_stop))
 		write(2, "Sem_post function error!\n", 25);
 	while (1)
